@@ -1,5 +1,6 @@
 package com.example.supermarketmanagementapi.repository;
 
+import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,6 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
             " left join category as c on p.id_cate = :id " +
             "where c.id = :id ",nativeQuery = true)
     List<Product> findProductByCate(@Param("id") Integer id);
+
+
 }
