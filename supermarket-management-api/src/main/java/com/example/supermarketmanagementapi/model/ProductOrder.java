@@ -1,5 +1,7 @@
 package com.example.supermarketmanagementapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,6 +15,8 @@ public class ProductOrder {
     private Integer id;
     private Date date;
     private Integer quantity;
+    @Column(columnDefinition = "bit(1) default 0")
+    private boolean isDelete;
 
     @ManyToOne
     @JoinColumn(name = "id_account", referencedColumnName = "id")

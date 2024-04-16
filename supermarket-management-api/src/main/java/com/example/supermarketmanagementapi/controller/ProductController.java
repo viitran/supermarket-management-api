@@ -4,15 +4,12 @@ package com.example.supermarketmanagementapi.controller;
 import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.model.Account;
 import com.example.supermarketmanagementapi.model.Product;
-import com.example.supermarketmanagementapi.service.ICategoryService;
 import com.example.supermarketmanagementapi.service.IProductService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -55,5 +52,11 @@ public class ProductController {
         this.iProductService.addProductsToCart(orderDto, account.getUsername());
         return new ResponseEntity<>(orderDto, HttpStatus.OK);
     }
+
+//    @GetMapping("/product/{name}")
+//    public ResponseEntity<?> findAllProductByNameCategory(Integer id){
+//        List<Product> list = this.iProductService.findProductByCate(id);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
 }

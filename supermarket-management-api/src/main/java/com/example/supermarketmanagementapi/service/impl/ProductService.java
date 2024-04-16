@@ -45,25 +45,21 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductOrder> addProductsToCart(OrderDto orderDto,String username) {
+    public List<ProductOrder> addProductsToCart(OrderDto orderDto, String username) {
         Product product = this.iProductRepository.findProductById(orderDto.getProductId());
         Account account = this.iAccountRepository.findAccountByUsername("vtran123");
-        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProduct(product.getId());
+        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProductOrUsername(product.getId(), "vtran123");
         if (productOrder == null) {
-            addProductToCart(product,account);
+            addProductToCart(product, account);
         } else {
-            if (orderDto.getQuantity() == 1) {
-                if (orderDto.getQuantity() < product.getQuantity()) {
-                    productOrder.setQuantity(productOrder.getQuantity() + 1);
-                    this.iProductOrderRepository.save(productOrder);
-                    System.out.println("tăng sl thành công");
-                    System.out.println(productOrder.getQuantity());
-                }
-            } else if (orderDto.getQuantity() > 1 && orderDto.getQuantity() < product.getQuantity()) {
+            if (orderDto.getQuantity() == 1 && product.getQuantity() > productOrder.getQuantity()) {
+                productOrder.setQuantity(productOrder.getQuantity() + 1);
+                this.iProductOrderRepository.save(productOrder);
+                System.out.println("tang sl thanh cong " + productOrder.getQuantity() + " id product la " + product.getId());
+            } else if (orderDto.getQuantity() == -1 && productOrder.getQuantity() < product.getQuantity()) {
                 productOrder.setQuantity(productOrder.getQuantity() - 1);
                 this.iProductOrderRepository.save(productOrder);
-                System.out.println("giảm sl thành công");
-                System.out.println(productOrder.getQuantity());
+                System.out.println("giam sl thanh cong " + productOrder.getQuantity() + " id product la " + product.getId());
             }
         }
         return null;

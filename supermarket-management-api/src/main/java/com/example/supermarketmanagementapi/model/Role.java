@@ -15,7 +15,4 @@ public class Role {
     private Integer id;
     private String name;
 
-    @OneToMany(mappedBy = "role")
-    private List<Account> accounts;
-
 }

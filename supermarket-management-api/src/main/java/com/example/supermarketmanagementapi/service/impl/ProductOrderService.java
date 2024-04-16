@@ -6,13 +6,27 @@ import com.example.supermarketmanagementapi.service.IProductOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductOrderService implements IProductOrderService {
     @Autowired
     private IProductOrderRepository iProductOrderRepository;
 
     @Override
-    public ProductOrder findOrderByIdProduct(Integer id) {
-        return this.iProductOrderRepository.findOrderByIdProduct(id);
+    public ProductOrder findOrderByIdProduct(Integer id,String username) {
+        return this.iProductOrderRepository.findOrderByIdProductOrUsername(id,username);
     }
+
+    @Override
+    public List<ProductOrder> getAllOrderOfUser(String username) {
+        return this.iProductOrderRepository.getAllProductOrderOfUser(username);
+    }
+
+    @Override
+    public void removeProductOrder(Integer id) {
+        this.iProductOrderRepository.removeProductOrderOfUser(id);
+    }
+
+
 }
