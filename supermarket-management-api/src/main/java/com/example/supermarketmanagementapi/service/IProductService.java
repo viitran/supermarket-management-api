@@ -3,9 +3,11 @@ package com.example.supermarketmanagementapi.service;
 
 
 import com.example.supermarketmanagementapi.dto.OrderDto;
+import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.Account;
 import com.example.supermarketmanagementapi.model.Product;
 import com.example.supermarketmanagementapi.model.ProductOrder;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface IProductService {
     List<Product> findProductByCate(Integer id);
     List<ProductOrder> addProductsToCart(OrderDto orderDto,String username);
     void addProductToCart(Product product, Account account);
+
+    Page<Product> getAllProductPage(RequestDto requestDto);
 }

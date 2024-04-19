@@ -2,10 +2,12 @@ package com.example.supermarketmanagementapi.controller;
 
 
 import com.example.supermarketmanagementapi.dto.OrderDto;
+import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.Account;
 import com.example.supermarketmanagementapi.model.Product;
 import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +27,10 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @GetMapping("/collections")
-    public ResponseEntity<?> showAllProduct() {
-        List<Product> products = this.iProductService.findAllProduct();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    @PostMapping("/collections")
+    public ResponseEntity<?> showAllProduct(@RequestBody RequestDto requestDto) {
+        Page<Product> productPage = this.iProductService.getAllProductPage(requestDto);
+        return new ResponseEntity<>(productPage, HttpStatus.OK);
     }
 
     @GetMapping("/product/{id}")

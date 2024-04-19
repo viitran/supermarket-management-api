@@ -2,6 +2,7 @@ package com.example.supermarketmanagementapi.service.impl;
 
 
 import com.example.supermarketmanagementapi.dto.OrderDto;
+import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.Account;
 import com.example.supermarketmanagementapi.model.Product;
 import com.example.supermarketmanagementapi.model.ProductOrder;
@@ -10,6 +11,9 @@ import com.example.supermarketmanagementapi.repository.IProductOrderRepository;
 import com.example.supermarketmanagementapi.repository.IProductRepository;
 import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -75,5 +79,11 @@ public class ProductService implements IProductService {
         productOrder.setQuantity(1);
         productOrder.setAccount(account);
         this.iProductOrderRepository.save(productOrder);
+    }
+
+    @Override
+    public Page<Product> getAllProductPage(RequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize(), requestDto.getSortDirection(), requestDto.getSortBy());
+        return this.iProductRepository.findAllPageProduct(pageable,requestDto);
     }
 }
