@@ -59,11 +59,18 @@ public class ProductService implements IProductService {
             if (orderDto.getQuantity() == 1 && product.getQuantity() > productOrder.getQuantity()) {
                 productOrder.setQuantity(productOrder.getQuantity() + 1);
                 this.iProductOrderRepository.save(productOrder);
+//                product.setQuantity(product.getQuantity()-productOrder.getQuantity());
                 System.out.println("tang sl thanh cong " + productOrder.getQuantity() + " id product la " + product.getId());
+//                System.out.println("sl con lai trong kho la " + product.getQuantity());
             } else if (orderDto.getQuantity() == -1 && productOrder.getQuantity() < product.getQuantity()) {
                 productOrder.setQuantity(productOrder.getQuantity() - 1);
                 this.iProductOrderRepository.save(productOrder);
                 System.out.println("giam sl thanh cong " + productOrder.getQuantity() + " id product la " + product.getId());
+            } else if (orderDto.getQuantity() > 1) {
+                if (product.getQuantity() >= (productOrder.getQuantity() + orderDto.getQuantity())) {
+                    productOrder.setQuantity(productOrder.getQuantity() + orderDto.getQuantity());
+                    this.iProductOrderRepository.save(productOrder);
+                }
             }
         }
         return null;

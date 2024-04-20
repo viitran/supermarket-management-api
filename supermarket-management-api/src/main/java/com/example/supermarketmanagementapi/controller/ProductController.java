@@ -5,6 +5,8 @@ import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.Account;
 import com.example.supermarketmanagementapi.model.Product;
+import com.example.supermarketmanagementapi.model.ProductOrder;
+import com.example.supermarketmanagementapi.repository.IProductOrderRepository;
 import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,9 @@ public class ProductController {
 
     @Autowired
     private IProductService iProductService;
+
+    @Autowired
+    IProductOrderRepository iProductOrderRepository;
 
     @GetMapping()
     public ResponseEntity<?> showNewProduct() {
@@ -60,5 +65,11 @@ public class ProductController {
 //        List<Product> list = this.iProductService.findProductByCate(id);
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
+
+    @PostMapping("cart-detail")
+    public ResponseEntity<?> getCartDetail(@RequestBody OrderDto orderDto) {
+        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProductOrUsername(orderDto.getProductId(), "vtran123");
+        return new ResponseEntity<>(productOrder,HttpStatus.OK);
+    }
 
 }

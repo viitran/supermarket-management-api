@@ -12,7 +12,7 @@ import java.util.List;
 public interface IProductOrderRepository extends JpaRepository<ProductOrder, Integer> {
     @Query(value = "select po.* from product_order as po left join account as a on po.id_account = a.id " +
             " left join product as p on po.product_id = p.id " +
-            " where a.username = :username and p.id = :id and po.id_bill is null", nativeQuery = true)
+            " where a.username = :username and p.id = :id and po.id_bill is null and po.is_delete = 0", nativeQuery = true)
     ProductOrder findOrderByIdProductOrUsername(@Param("id") Integer id, String username);
 
     @Query(value = "select po.* from product_order as po left join account as acc on po.id_account = acc.id " +
