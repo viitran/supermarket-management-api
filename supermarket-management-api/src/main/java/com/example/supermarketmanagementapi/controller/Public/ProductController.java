@@ -1,4 +1,4 @@
-package com.example.supermarketmanagementapi.controller;
+package com.example.supermarketmanagementapi.controller.Public;
 
 
 import com.example.supermarketmanagementapi.dto.OrderDto;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
+@RequestMapping("public")
 public class ProductController {
 
     @Autowired
@@ -51,14 +51,7 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> addProductToCart(@RequestBody OrderDto orderDto, Account account) {
-        if (orderDto.getProductId() == null || orderDto == null || orderDto.getQuantity() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        this.iProductService.addProductsToCart(orderDto, account.getUsername());
-        return new ResponseEntity<>(orderDto, HttpStatus.OK);
-    }
+
 
 //    @GetMapping("/product/{name}")
 //    public ResponseEntity<?> findAllProductByNameCategory(Integer id){
@@ -66,10 +59,6 @@ public class ProductController {
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
 
-    @PostMapping("cart-detail")
-    public ResponseEntity<?> getCartDetail(@RequestBody OrderDto orderDto) {
-        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProductOrUsername(orderDto.getProductId(), "vtran123");
-        return new ResponseEntity<>(productOrder,HttpStatus.OK);
-    }
+
 
 }

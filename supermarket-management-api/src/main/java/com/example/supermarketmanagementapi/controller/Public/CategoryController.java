@@ -1,16 +1,13 @@
-package com.example.supermarketmanagementapi.controller;
+package com.example.supermarketmanagementapi.controller.Public;
 
 import com.example.supermarketmanagementapi.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin("*")
+@RequestMapping("public")
 public class CategoryController {
     @Autowired
     private ICategoryService iCategoryService;
