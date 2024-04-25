@@ -31,9 +31,5 @@ public class UserProductController {
         return new ResponseEntity<>(orderDto, HttpStatus.OK);
     }
 
-    @PostMapping("cart-detail")
-    public ResponseEntity<?> getCartDetail(@RequestBody OrderDto orderDto) {
-        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProductOrUsername(orderDto.getProductId(), "vtran123");
-        return new ResponseEntity<>(productOrder, HttpStatus.OK);
-    }
+
 }

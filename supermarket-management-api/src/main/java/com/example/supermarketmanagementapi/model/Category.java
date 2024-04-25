@@ -13,6 +13,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
     @OneToMany(mappedBy = "category")
     @JsonBackReference
     private List<Product> product;

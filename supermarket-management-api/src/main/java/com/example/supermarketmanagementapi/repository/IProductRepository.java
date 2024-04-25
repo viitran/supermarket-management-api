@@ -28,10 +28,14 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
 
     @Query(value = "select p from Product as p " +
             "join Category as c on p.category.id = c.id " +
-            "where p.name like concat('%',:#{#requestDto.name},'%') and " +
+            "where p.name like concat('%', :#{#requestDto.name} ,'%') and " +
             "((p.price between :#{#requestDto.priceFrom} and :#{#requestDto.priceTo}) or :#{#requestDto.priceFrom} is null or :#{#requestDto.priceTo} is null ) " +
             "and (p.category.id = :#{#requestDto.categoryId} or :#{#requestDto.categoryId} = -1)")
     Page<Product> findAllPageProduct(Pageable pageable, @Param("requestDto") RequestDto requestDto);
 
 
+    @Query(value = " select p from Product p " +
+            "join ProductDish pd on p.id = pd.product.id " +
+            "join Dish d on d.id = pd.dish.id where d.id = :id")
+    List<Product> findAllByDishId(@Param("id") Integer id);
 }
