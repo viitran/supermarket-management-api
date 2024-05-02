@@ -58,12 +58,4 @@ public class ProductController {
 
 
 
-//    @GetMapping("/product/{name}")
-//    public ResponseEntity<?> findAllProductByNameCategory(Integer id){
-//        List<Product> list = this.iProductService.findProductByCate(id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
-
-
 }
