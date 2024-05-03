@@ -2,10 +2,9 @@ package com.example.supermarketmanagementapi.service.impl;
 
 
 import com.example.supermarketmanagementapi.dto.OrderDto;
+import com.example.supermarketmanagementapi.dto.PaymentDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
-import com.example.supermarketmanagementapi.model.Account;
-import com.example.supermarketmanagementapi.model.Product;
-import com.example.supermarketmanagementapi.model.ProductOrder;
+import com.example.supermarketmanagementapi.model.*;
 import com.example.supermarketmanagementapi.repository.IAccountRepository;
 import com.example.supermarketmanagementapi.repository.IProductOrderRepository;
 import com.example.supermarketmanagementapi.repository.IProductRepository;
@@ -91,6 +90,19 @@ public class ProductService implements IProductService {
     @Override
     public Page<Product> getAllProductPage(RequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize(), requestDto.getSortDirection(), requestDto.getSortBy());
-        return this.iProductRepository.findAllPageProduct(pageable,requestDto);
+        return this.iProductRepository.findAllPageProduct(pageable, requestDto);
+    }
+
+    private Bill addNewBill(PaymentDto paymentDto, Account account, List<ProductOrder> productOrders, double totalPrice) {
+        Bill bill = new Bill();
+        bill.setDate(new Date(System.currentTimeMillis()));
+
+        PaymentStatus paymentStatus = new PaymentStatus();
+        paymentStatus.setId(paymentDto.getPaymentStatusId());
+
+        bill.setPaymentStatus(paymentStatus);
+
+        bill.setTotal(totalPrice);
+        return null;
     }
 }

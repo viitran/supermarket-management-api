@@ -2,6 +2,9 @@ package com.example.supermarketmanagementapi.controller;
 
 import com.example.supermarketmanagementapi.config.PaymentConfig;
 import com.example.supermarketmanagementapi.dto.PaymentDto;
+import com.example.supermarketmanagementapi.model.Account;
+import com.example.supermarketmanagementapi.service.IAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +18,19 @@ import java.util.*;
 @RestController
 @RequestMapping("user")
 public class PaymentController {
+
+    @Autowired
+    private IAccountService iAccountService;
+
     @GetMapping("/createPay")
-    private ResponseEntity<?> payment(@RequestParam Long price, @RequestParam Integer id) throws UnsupportedEncodingException {
+    private ResponseEntity<?> payment(@RequestParam Long price, @RequestParam(value = "id") Integer id) throws UnsupportedEncodingException {
         long amount = price * 100;
         String orderType = "other";
         String bankCode = "NCB";
         String vnp_TxnRef = PaymentConfig.getRandomNumber(8);
         String vnp_IpAddr = "10.10.8.48";
-        String vnp_ReturnUrl = "http://localhost:3000/payment-successfully/" + id + "/";
+        String vnp_ReturnUrl = "http://localhost:8080/user/payment_info/"
+                + id;
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
         vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
@@ -35,6 +43,7 @@ public class PaymentController {
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");
+//        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
         vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
@@ -82,7 +91,18 @@ public class PaymentController {
     }
 
     @GetMapping("/payment_info/{id}")
-    public ResponseEntity<?> getPaymentInfo(@PathVariable Integer id){
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> getPaymentInfo(@PathVariable Integer id,
+                                            @RequestParam(value = "vnp_Amount") String amount,
+                                            @RequestParam(value = "vnp_BankCode") String bankCode,
+                                            @RequestParam(value = "vnp_OrderInfo") String order,
+                                            @RequestParam(value = "vnp_ResponseCode") String responseCode) {
+        Account account = this.iAccountService.findAccountById(id);
+        if (responseCode.equals("00")) {
+            System.out.println(account.getFullName() + " da thanh toan thanh cong");
+            return new ResponseEntity<>("successfully", HttpStatus.OK);
+        } else {
+            System.out.println(account.getFullName() + " da huy thanh toan");
+            return new ResponseEntity<>("error", HttpStatus.OK);
+        }
     }
 }
