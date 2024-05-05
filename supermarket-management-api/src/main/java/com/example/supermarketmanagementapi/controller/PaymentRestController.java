@@ -4,23 +4,29 @@ import com.example.supermarketmanagementapi.config.PaymentConfig;
 import com.example.supermarketmanagementapi.dto.PaymentDto;
 import com.example.supermarketmanagementapi.model.Account;
 import com.example.supermarketmanagementapi.service.IAccountService;
+import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
 @RequestMapping("user")
-public class PaymentController {
+public class PaymentRestController {
 
     @Autowired
     private IAccountService iAccountService;
+
+    @Autowired
+    private IProductService iProductService;
 
     @GetMapping("/createPay")
     private ResponseEntity<?> payment(@RequestParam Long price, @RequestParam(value = "id") Integer id) throws UnsupportedEncodingException {
@@ -29,8 +35,8 @@ public class PaymentController {
         String bankCode = "NCB";
         String vnp_TxnRef = PaymentConfig.getRandomNumber(8);
         String vnp_IpAddr = "10.10.8.48";
-        String vnp_ReturnUrl = "http://localhost:8080/user/payment_info/"
-                + id;
+        String vnp_ReturnUrl = "http://localhost:3000/paymentCart/" + id;
+        // check lai return url
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
         vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
@@ -39,7 +45,7 @@ public class PaymentController {
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", bankCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don ha ng:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");
@@ -87,22 +93,28 @@ public class PaymentController {
         paymentResDTO.setStatus("OK");
         paymentResDTO.setMessage("Success");
         paymentResDTO.setUrl(paymentUrl);
+        System.out.println(paymentUrl);
         return new ResponseEntity<>(paymentUrl, HttpStatus.OK);
     }
 
     @GetMapping("/payment_info/{id}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable Integer id,
-                                            @RequestParam(value = "vnp_Amount") String amount,
-                                            @RequestParam(value = "vnp_BankCode") String bankCode,
-                                            @RequestParam(value = "vnp_OrderInfo") String order,
-                                            @RequestParam(value = "vnp_ResponseCode") String responseCode) {
+                                            @RequestParam(value = "status") String status ,
+                                            @RequestParam(value = "vnp_Amount", required = false) String amount,
+                                            @RequestParam(value = "vnp_BankCode", required = false) String bankCode,
+                                            @RequestParam(value = "vnp_OrderInfo", required = false) String order,
+                                            @RequestParam(value = "vnp_ResponseCode", required = false) String responseCode,
+                                 Principal principal) {
         Account account = this.iAccountService.findAccountById(id);
-        if (responseCode.equals("00")) {
+        if (status.equals("00")) {
             System.out.println(account.getFullName() + " da thanh toan thanh cong");
-            return new ResponseEntity<>("successfully", HttpStatus.OK);
+            this.iProductService.addNewBill(principal.getName());
+                return new ResponseEntity<>("success",HttpStatus.OK);
         } else {
             System.out.println(account.getFullName() + " da huy thanh toan");
-            return new ResponseEntity<>("error", HttpStatus.OK);
+            return new ResponseEntity<>("error",HttpStatus.OK);
         }
     }
+
+
 }

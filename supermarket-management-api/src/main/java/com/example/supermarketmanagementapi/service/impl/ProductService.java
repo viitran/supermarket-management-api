@@ -6,8 +6,10 @@ import com.example.supermarketmanagementapi.dto.PaymentDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.*;
 import com.example.supermarketmanagementapi.repository.IAccountRepository;
+import com.example.supermarketmanagementapi.repository.IBillRepository;
 import com.example.supermarketmanagementapi.repository.IProductOrderRepository;
 import com.example.supermarketmanagementapi.repository.IProductRepository;
+import com.example.supermarketmanagementapi.service.IAccountService;
 import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -23,9 +26,13 @@ public class ProductService implements IProductService {
     @Autowired
     private IProductRepository iProductRepository;
     @Autowired
-    IProductOrderRepository iProductOrderRepository;
+    private IProductOrderRepository iProductOrderRepository;
     @Autowired
-    IAccountRepository iAccountRepository;
+    private IAccountRepository iAccountRepository;
+
+    @Autowired
+    private IBillRepository billRepository;
+
 
     @Override
     public List<Product> findNewProduct() {
@@ -87,22 +94,44 @@ public class ProductService implements IProductService {
         this.iProductOrderRepository.save(productOrder);
     }
 
+
+    @Override
+    public Bill addNewBill(String username) {
+        List<ProductOrder> productOrderList = this.iProductOrderRepository.getAllProductOrderOfUser(username);
+
+        Bill bill = new Bill();
+        bill.setDate(new Date(System.currentTimeMillis()));
+
+        PaymentStatus paymentStatus = new PaymentStatus();
+        paymentStatus.setId(1);
+
+        bill.setPaymentStatus(paymentStatus);
+
+        double totalPrice = 0;
+        for (ProductOrder productOrder : productOrderList) {
+            totalPrice += productOrder.getQuantity() * productOrder.getProduct().getPrice();
+        }
+
+        bill.setTotal(totalPrice);
+
+        Bill bill1 = this.billRepository.save(bill);
+
+        for (ProductOrder po : productOrderList) {
+            po.setBill(bill1);
+            Product product = po.getProduct();
+            product.setQuantity(product.getQuantity() - po.getQuantity());
+            this.iProductRepository.save(product);
+            this.iProductOrderRepository.save(po);
+        }
+        return null;
+    }
+
+
     @Override
     public Page<Product> getAllProductPage(RequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize(), requestDto.getSortDirection(), requestDto.getSortBy());
         return this.iProductRepository.findAllPageProduct(pageable, requestDto);
     }
 
-    private Bill addNewBill(PaymentDto paymentDto, Account account, List<ProductOrder> productOrders, double totalPrice) {
-        Bill bill = new Bill();
-        bill.setDate(new Date(System.currentTimeMillis()));
 
-        PaymentStatus paymentStatus = new PaymentStatus();
-        paymentStatus.setId(paymentDto.getPaymentStatusId());
-
-        bill.setPaymentStatus(paymentStatus);
-
-        bill.setTotal(totalPrice);
-        return null;
-    }
 }
