@@ -29,4 +29,5 @@ public class ProductOrder {
     @ManyToOne
     @JoinColumn(name = "id_bill",referencedColumnName = "id")
     private Bill bill;
+
 }

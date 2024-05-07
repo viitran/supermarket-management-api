@@ -19,5 +19,11 @@ public class CartController {
     public ResponseEntity<?> findAllOrderByUsername(Principal principal){
         return new ResponseEntity<>(this.iProductOrderService.getAllOrderOfUser(principal.getName()),HttpStatus.OK);
     }
+
+    @PostMapping("remove/{id}")
+    public ResponseEntity<?> removeProductOnCart(@PathVariable Integer id){
+        this.iProductOrderService.removeProductOrder(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
 

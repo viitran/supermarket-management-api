@@ -23,6 +23,8 @@ public class Product {
     private Double price;
     private Date startDate;
 
+
+
     @ManyToOne
     @JoinColumn(name = "id_status",referencedColumnName = "id")
     private Status status;

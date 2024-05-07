@@ -1,6 +1,7 @@
 package com.example.supermarketmanagementapi.controller.Public;
 
 
+import com.example.supermarketmanagementapi.dto.IProductDto;
 import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.Product;
@@ -30,6 +31,12 @@ public class ProductController {
     public ResponseEntity<?> showNewProduct() {
         List<Product> products = this.iProductService.findNewProduct();
         return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    @GetMapping("selling")
+    public ResponseEntity<?> showAllTopSelling(){
+        List<IProductDto> topSelling = this.iProductService.findAllProductsTopSelling();
+        return new ResponseEntity<>(topSelling,HttpStatus.OK);
     }
 
     @PostMapping("/collections")

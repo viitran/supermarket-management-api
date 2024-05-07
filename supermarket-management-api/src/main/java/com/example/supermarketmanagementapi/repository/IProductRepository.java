@@ -1,5 +1,6 @@
 package com.example.supermarketmanagementapi.repository;
 
+import com.example.supermarketmanagementapi.dto.IProductDto;
 import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
 import com.example.supermarketmanagementapi.model.Product;
@@ -41,4 +42,10 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
             "join Dish d on d.id = pd.dish.id where d.id = :id")
     List<Product> findAllByDishId(@Param("id") Integer id);
 
+    @Query(value ="select p.*,sum(po.quantity) as quantityProductOrder " +
+            "from product_order as po " +
+            "left join product as p on po.product_id = p.id " +
+            "left join category as c on p.id_cate = c.id " +
+            "group by p.id ,p.name order by quantityProductOrder desc limit 8",nativeQuery = true)
+    List<IProductDto> findTopSelling();
 }

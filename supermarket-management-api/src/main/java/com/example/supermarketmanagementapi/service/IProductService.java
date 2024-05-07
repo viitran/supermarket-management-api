@@ -1,6 +1,7 @@
 package com.example.supermarketmanagementapi.service;
 
 
+import com.example.supermarketmanagementapi.dto.IProductDto;
 import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.dto.PaymentDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
@@ -29,4 +30,5 @@ public interface IProductService {
     Bill addNewBill(String username);
 
     Page<Product> getAllProductPage(RequestDto requestDto);
+    List<IProductDto> findAllProductsTopSelling();
 }

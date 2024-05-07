@@ -15,6 +15,8 @@ public class Bill {
     private Integer id;
     private Date date;
     private Double total;
+    private String address;
+    private String message;
 
     @ManyToOne
     @JoinColumn(name = "id_payment_status",referencedColumnName = "id")

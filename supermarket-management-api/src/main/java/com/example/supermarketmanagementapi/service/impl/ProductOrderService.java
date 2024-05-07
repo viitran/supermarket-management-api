@@ -28,5 +28,10 @@ public class ProductOrderService implements IProductOrderService {
         this.iProductOrderRepository.removeProductOrderOfUser(id);
     }
 
+    @Override
+    public List<ProductOrder> getHistoryOrder(String username) {
+        return this.iProductOrderRepository.getOrderHistoryByUsername(username);
+    }
+
 
 }

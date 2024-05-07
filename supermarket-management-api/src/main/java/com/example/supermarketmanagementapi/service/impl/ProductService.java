@@ -1,6 +1,7 @@
 package com.example.supermarketmanagementapi.service.impl;
 
 
+import com.example.supermarketmanagementapi.dto.IProductDto;
 import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.dto.PaymentDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
@@ -57,8 +58,8 @@ public class ProductService implements IProductService {
     @Override
     public List<ProductOrder> addProductsToCart(OrderDto orderDto, String username) {
         Product product = this.iProductRepository.findProductById(orderDto.getProductId());
-        Account account = this.iAccountRepository.findAccountByUsername("vtran123");
-        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProductOrUsername(product.getId(), "vtran123");
+        Account account = this.iAccountRepository.findAccountByUsername(username);
+        ProductOrder productOrder = this.iProductOrderRepository.findOrderByIdProductOrUsername(product.getId(), username);
         if (productOrder == null) {
             addProductToCart(product, account);
         } else {
@@ -103,7 +104,7 @@ public class ProductService implements IProductService {
         bill.setDate(new Date(System.currentTimeMillis()));
 
         PaymentStatus paymentStatus = new PaymentStatus();
-        paymentStatus.setId(1);
+        paymentStatus.setId(2);
 
         bill.setPaymentStatus(paymentStatus);
 
@@ -131,6 +132,11 @@ public class ProductService implements IProductService {
     public Page<Product> getAllProductPage(RequestDto requestDto) {
         Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize(), requestDto.getSortDirection(), requestDto.getSortBy());
         return this.iProductRepository.findAllPageProduct(pageable, requestDto);
+    }
+
+    @Override
+    public List<IProductDto> findAllProductsTopSelling() {
+        return this.iProductRepository.findTopSelling();
     }
 
 
