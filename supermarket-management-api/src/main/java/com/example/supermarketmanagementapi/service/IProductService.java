@@ -10,6 +10,7 @@ import com.example.supermarketmanagementapi.model.Bill;
 import com.example.supermarketmanagementapi.model.Product;
 import com.example.supermarketmanagementapi.model.ProductOrder;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 
 import java.security.Principal;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface IProductService {
 
     void addProductToCart(Product product, Account account);
 
-    Bill addNewBill(String username);
+    ResponseEntity<?> addNewBill(String username);
 
     Page<Product> getAllProductPage(RequestDto requestDto);
     List<IProductDto> findAllProductsTopSelling();

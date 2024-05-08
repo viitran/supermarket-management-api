@@ -17,14 +17,22 @@ public interface IProductOrderRepository extends JpaRepository<ProductOrder, Int
     ProductOrder findOrderByIdProductOrUsername(@Param("id") Integer id, String username);
 
     @Query(value = "select po.* from product_order as po left join account as acc on po.id_account = acc.id " +
-            "where acc.username = :username and po.id_bill is null and po.is_delete = 0", nativeQuery = true)
+            "where acc.username = :username and po.id_bill is null and po.is_delete = false", nativeQuery = true)
     List<ProductOrder> getAllProductOrderOfUser(@Param("username") String username);
 
     @Transactional
     @Modifying
-    @Query(value = "update product_order set is_delete = 1 where id_account = :id and product_id = :id;", nativeQuery = true)
+    @Query(value = "update product_order set is_delete = true where id_account = :id and product_id = :id " +
+            "and id_bill is null;", nativeQuery = true)
     void removeProductOrderOfUser(@Param("id") Integer id);
 
-    @Query(value = "select po from ProductOrder po where po.account.username = :username and po.bill.id is not null")
+    @Query(value = "select po from ProductOrder po where po.account.username = :username and po.bill.id is not null " +
+            " order by po.date desc")
     List<ProductOrder> getOrderHistoryByUsername(@Param("username") String username);
+
+    @Query(value = "select po.* from product_order po " +
+            "left join account as a on po.id_account = a.id " +
+            "left join product as p on po.product_id = p.id " +
+            "where a.username = :username and p.id = :id",nativeQuery = true)
+    List<ProductOrder> getQuantityThisProductOnCart(@Param("id") Integer id,@Param("username") String username);
 }

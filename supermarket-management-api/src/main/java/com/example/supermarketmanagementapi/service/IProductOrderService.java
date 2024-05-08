@@ -9,4 +9,6 @@ public interface IProductOrderService {
     List<ProductOrder> getAllOrderOfUser(String username);
     void removeProductOrder(Integer id);
     List<ProductOrder> getHistoryOrder(String username);
+    void deleteById(Integer id);
+    List<ProductOrder> getQuantityThisProductOnCart(Integer id,String username);
 }

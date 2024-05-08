@@ -15,14 +15,14 @@ public class CartController {
     @Autowired
     private IProductOrderService iProductOrderService;
 
-    @GetMapping("/cart")
+    @PostMapping("/cart")
     public ResponseEntity<?> findAllOrderByUsername(Principal principal){
         return new ResponseEntity<>(this.iProductOrderService.getAllOrderOfUser(principal.getName()),HttpStatus.OK);
     }
 
-    @PostMapping("remove/{id}")
+    @PostMapping("/remove/{id}")
     public ResponseEntity<?> removeProductOnCart(@PathVariable Integer id){
-        this.iProductOrderService.removeProductOrder(id);
+        this.iProductOrderService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

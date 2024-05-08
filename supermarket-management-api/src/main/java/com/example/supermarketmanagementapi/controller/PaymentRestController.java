@@ -3,7 +3,9 @@ package com.example.supermarketmanagementapi.controller;
 import com.example.supermarketmanagementapi.config.PaymentConfig;
 import com.example.supermarketmanagementapi.dto.PaymentDto;
 import com.example.supermarketmanagementapi.model.Account;
+import com.example.supermarketmanagementapi.model.ProductOrder;
 import com.example.supermarketmanagementapi.service.IAccountService;
+import com.example.supermarketmanagementapi.service.IProductOrderService;
 import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,15 +29,18 @@ public class PaymentRestController {
 
     @Autowired
     private IProductService iProductService;
+    @Autowired
+    private IProductOrderService iProductOrderService;
 
     @GetMapping("/createPay")
     private ResponseEntity<?> payment(@RequestParam Long price, @RequestParam(value = "id") Integer id) throws UnsupportedEncodingException {
-        long amount = price * 100;
+        long amount = (price + 30000) * 100;
         String orderType = "other";
         String bankCode = "NCB";
         String vnp_TxnRef = PaymentConfig.getRandomNumber(8);
         String vnp_IpAddr = "10.10.8.48";
         String vnp_ReturnUrl = "http://localhost:3000/paymentCart/" + id;
+//        String vnp_ReturnUrl = "http://localhost:8080/user/payment_info/" + id;
         // check lai return url
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
@@ -99,20 +104,23 @@ public class PaymentRestController {
 
     @GetMapping("/payment_info/{id}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable Integer id,
-                                            @RequestParam(value = "status") String status ,
+                                            @RequestParam(value = "status") String status,
                                             @RequestParam(value = "vnp_Amount", required = false) String amount,
                                             @RequestParam(value = "vnp_BankCode", required = false) String bankCode,
                                             @RequestParam(value = "vnp_OrderInfo", required = false) String order,
                                             @RequestParam(value = "vnp_ResponseCode", required = false) String responseCode,
-                                 Principal principal) {
+                                            Principal principal) {
         Account account = this.iAccountService.findAccountById(id);
         if (status.equals("00")) {
             System.out.println(account.getFullName() + " da thanh toan thanh cong");
             this.iProductService.addNewBill(principal.getName());
-                return new ResponseEntity<>("success",HttpStatus.OK);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } else if (status.equals("paid")) {
+            System.out.println(account.getFullName() + " da thanh toan truoc do");
+            return new ResponseEntity<>("paid", HttpStatus.OK);
         } else {
             System.out.println(account.getFullName() + " da huy thanh toan");
-            return new ResponseEntity<>("error",HttpStatus.OK);
+            return new ResponseEntity<>("error", HttpStatus.OK);
         }
     }
 

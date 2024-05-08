@@ -3,6 +3,7 @@ package com.example.supermarketmanagementapi.service.impl;
 import com.example.supermarketmanagementapi.model.ProductOrder;
 import com.example.supermarketmanagementapi.repository.IProductOrderRepository;
 import com.example.supermarketmanagementapi.service.IProductOrderService;
+import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,8 @@ public class ProductOrderService implements IProductOrderService {
     private IProductOrderRepository iProductOrderRepository;
 
     @Override
-    public ProductOrder findOrderByIdProduct(Integer id,String username) {
-        return this.iProductOrderRepository.findOrderByIdProductOrUsername(id,username);
+    public ProductOrder findOrderByIdProduct(Integer id, String username) {
+        return this.iProductOrderRepository.findOrderByIdProductOrUsername(id, username);
     }
 
     @Override
@@ -31,6 +32,16 @@ public class ProductOrderService implements IProductOrderService {
     @Override
     public List<ProductOrder> getHistoryOrder(String username) {
         return this.iProductOrderRepository.getOrderHistoryByUsername(username);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        this.iProductOrderRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ProductOrder> getQuantityThisProductOnCart(Integer id, String username) {
+        return this.iProductOrderRepository.getQuantityThisProductOnCart(id, username);
     }
 
 

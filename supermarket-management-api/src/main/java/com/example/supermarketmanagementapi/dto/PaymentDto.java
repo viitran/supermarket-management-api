@@ -9,7 +9,7 @@ public class PaymentDto implements Serializable {
     private String status;
     private String message;
     private String url;
-
+    private String address;
     private Integer paymentStatusId;
 
 }

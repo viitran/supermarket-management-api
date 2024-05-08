@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -97,34 +99,40 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public Bill addNewBill(String username) {
+    public ResponseEntity<?> addNewBill(String username) {
         List<ProductOrder> productOrderList = this.iProductOrderRepository.getAllProductOrderOfUser(username);
+        if (!productOrderList.isEmpty()) {
+            Bill bill = new Bill();
+            bill.setDate(new Date(System.currentTimeMillis()));
 
-        Bill bill = new Bill();
-        bill.setDate(new Date(System.currentTimeMillis()));
+            PaymentStatus paymentStatus = new PaymentStatus();
+            paymentStatus.setId(2);
 
-        PaymentStatus paymentStatus = new PaymentStatus();
-        paymentStatus.setId(2);
+            bill.setPaymentStatus(paymentStatus);
 
-        bill.setPaymentStatus(paymentStatus);
+            double totalPrice = 0;
+            for (ProductOrder productOrder : productOrderList) {
+                totalPrice += (productOrder.getQuantity() * productOrder.getProduct().getPrice()) + 30000;
+            }
+            bill.setTotal(totalPrice);
 
-        double totalPrice = 0;
-        for (ProductOrder productOrder : productOrderList) {
-            totalPrice += productOrder.getQuantity() * productOrder.getProduct().getPrice();
+            bill.setAddress("280 Trần Hưng Đạo");
+            bill.setMessage("ok");
+
+            Bill bill1 = this.billRepository.save(bill);
+
+            for (ProductOrder po : productOrderList) {
+                po.setBill(bill1);
+                Product product = po.getProduct();
+                product.setQuantity(product.getQuantity() - po.getQuantity());
+                this.iProductRepository.save(product);
+                this.iProductOrderRepository.save(po);
+            }
+            return new ResponseEntity<>("00", HttpStatus.OK);
+        } else {
+            System.out.println("don hang da dc thanh toan");
+            return new ResponseEntity<>("paid", HttpStatus.OK);
         }
-
-        bill.setTotal(totalPrice);
-
-        Bill bill1 = this.billRepository.save(bill);
-
-        for (ProductOrder po : productOrderList) {
-            po.setBill(bill1);
-            Product product = po.getProduct();
-            product.setQuantity(product.getQuantity() - po.getQuantity());
-            this.iProductRepository.save(product);
-            this.iProductOrderRepository.save(po);
-        }
-        return null;
     }
 
 
