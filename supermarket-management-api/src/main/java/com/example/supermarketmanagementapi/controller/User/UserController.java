@@ -2,6 +2,7 @@ package com.example.supermarketmanagementapi.controller.User;
 
 import com.example.supermarketmanagementapi.model.ProductOrder;
 import com.example.supermarketmanagementapi.repository.IAccountRepository;
+import com.example.supermarketmanagementapi.service.IBillService;
 import com.example.supermarketmanagementapi.service.IProductOrderService;
 import com.example.supermarketmanagementapi.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class UserController {
     @Autowired
     private IProductService iProductService;
 
+    @Autowired
+    private IBillService iBillService;
     @GetMapping("/info")
     public ResponseEntity<?> showInfoUser(Principal principal) {
         return new ResponseEntity<>(this.iAccountRepository.findAccountByUsername(principal.getName()), HttpStatus.OK);
@@ -35,6 +38,11 @@ public class UserController {
     public ResponseEntity<?> getHistoryOrder(Principal principal) {
         List<ProductOrder> productOrders = this.iProductOrderService.getHistoryOrder(principal.getName());
         return new ResponseEntity<>(productOrders, HttpStatus.OK);
+    }
+
+    @GetMapping("/products-after-payment")
+    public ResponseEntity<?> getAllProductAfterPayment(Principal principal) {
+        return new ResponseEntity<>(this.iBillService.getAllProductAfterPayment(principal.getName()), HttpStatus.OK);
     }
 
 //    @GetMapping("/test/{id}")

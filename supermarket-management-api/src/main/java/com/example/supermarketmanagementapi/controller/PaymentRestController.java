@@ -109,11 +109,13 @@ public class PaymentRestController {
                                             @RequestParam(value = "vnp_BankCode", required = false) String bankCode,
                                             @RequestParam(value = "vnp_OrderInfo", required = false) String order,
                                             @RequestParam(value = "vnp_ResponseCode", required = false) String responseCode,
-                                            Principal principal) {
+                                            Principal principal,
+                                            @RequestParam(value = "address", required = false) String address,
+                                            @RequestParam(value = "message", required = false) String message) {
         Account account = this.iAccountService.findAccountById(id);
         if (status.equals("00")) {
             System.out.println(account.getFullName() + " da thanh toan thanh cong");
-            this.iProductService.addNewBill(principal.getName());
+            this.iProductService.addNewBill(principal.getName(),address,message);
             return new ResponseEntity<>("success", HttpStatus.OK);
         } else if (status.equals("paid")) {
             System.out.println(account.getFullName() + " da thanh toan truoc do");
@@ -123,6 +125,4 @@ public class PaymentRestController {
             return new ResponseEntity<>("error", HttpStatus.OK);
         }
     }
-
-
 }

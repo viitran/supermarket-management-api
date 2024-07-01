@@ -68,9 +68,7 @@ public class ProductService implements IProductService {
             if (orderDto.getQuantity() == 1 && product.getQuantity() > productOrder.getQuantity()) {
                 productOrder.setQuantity(productOrder.getQuantity() + 1);
                 this.iProductOrderRepository.save(productOrder);
-//                product.setQuantity(product.getQuantity()-productOrder.getQuantity());
                 System.out.println("tang sl thanh cong " + productOrder.getQuantity() + " id product la " + product.getId());
-//                System.out.println("sl con lai trong kho la " + product.getQuantity());
             } else if (orderDto.getQuantity() == -1 && productOrder.getQuantity() < product.getQuantity()) {
                 productOrder.setQuantity(productOrder.getQuantity() - 1);
                 this.iProductOrderRepository.save(productOrder);
@@ -99,7 +97,7 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public ResponseEntity<?> addNewBill(String username) {
+    public ResponseEntity<?> addNewBill(String username, String address, String message) {
         List<ProductOrder> productOrderList = this.iProductOrderRepository.getAllProductOrderOfUser(username);
         if (!productOrderList.isEmpty()) {
             Bill bill = new Bill();
@@ -116,7 +114,7 @@ public class ProductService implements IProductService {
             }
             bill.setTotal(totalPrice);
 
-            bill.setAddress("280 Trần Hưng Đạo");
+            bill.setAddress("295 Nguyễn Tất Thành");
             bill.setMessage("ok");
 
             Bill bill1 = this.billRepository.save(bill);
@@ -135,17 +133,28 @@ public class ProductService implements IProductService {
         }
     }
 
-
-    @Override
-    public Page<Product> getAllProductPage(RequestDto requestDto) {
-        Pageable pageable = PageRequest.of(requestDto.getPage(), requestDto.getSize(), requestDto.getSortDirection(), requestDto.getSortBy());
-        return this.iProductRepository.findAllPageProduct(pageable, requestDto);
+    public void editAddressUser(String username, String newAddress) {
+        Account account = this.iAccountRepository.findAccountByUsername(username);
+        if (account != null) {
+            account.setAddress(newAddress);
+            this.iAccountRepository.save(account);
+        }
     }
 
     @Override
     public List<IProductDto> findAllProductsTopSelling() {
         return this.iProductRepository.findTopSelling();
     }
+
+    @Override
+    public Page<Product> getAllProduct(Pageable pageable, String name, Double priceFrom, Double priceTo, Integer categoryId) {
+        return this.iProductRepository.getAllPageProduct(pageable, name, priceFrom, priceTo, categoryId);
+    }
+
+//    @Override
+//    public List<Bill> getAllProductAfterPayment(String username) {
+//        return this.iProductRepository.getAllProductAfterPayment(username);
+//    }
 
 
 }

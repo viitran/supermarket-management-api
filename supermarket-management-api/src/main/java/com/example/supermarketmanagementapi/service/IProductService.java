@@ -10,6 +10,7 @@ import com.example.supermarketmanagementapi.model.Bill;
 import com.example.supermarketmanagementapi.model.Product;
 import com.example.supermarketmanagementapi.model.ProductOrder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.security.Principal;
@@ -28,8 +29,9 @@ public interface IProductService {
 
     void addProductToCart(Product product, Account account);
 
-    ResponseEntity<?> addNewBill(String username);
+    ResponseEntity<?> addNewBill(String username,String address,String message);
 
-    Page<Product> getAllProductPage(RequestDto requestDto);
     List<IProductDto> findAllProductsTopSelling();
+    Page<Product> getAllProduct(Pageable pageable,String name,Double priceFrom,Double priceTo,Integer categoryId);
+
 }

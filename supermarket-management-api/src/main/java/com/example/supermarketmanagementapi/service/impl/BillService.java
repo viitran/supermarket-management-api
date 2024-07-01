@@ -17,6 +17,11 @@ public class BillService implements IBillService {
     @Autowired
     private IBillRepository iBillRepository;
 
+    @Override
+    public List<Bill> getAllProductAfterPayment(String username) {
+        return this.iBillRepository.getAllProductAfterPayment(username);
+    }
+
 //    public Bill addNewBill(Double totalPrice, Account account, List<ProductOrder> productOrders) {
 //        Bill bill = new Bill();
 //        bill.setDate(new Date(System.currentTimeMillis()));

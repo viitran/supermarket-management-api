@@ -3,6 +3,7 @@ package com.example.supermarketmanagementapi.repository;
 import com.example.supermarketmanagementapi.dto.IProductDto;
 import com.example.supermarketmanagementapi.dto.OrderDto;
 import com.example.supermarketmanagementapi.dto.RequestDto;
+import com.example.supermarketmanagementapi.model.Bill;
 import com.example.supermarketmanagementapi.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,23 +30,28 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
             "where c.id = :id ", nativeQuery = true)
     List<Product> findProductByCate(@Param("id") Integer id);
 
-    @Query(value = "select p from Product as p " +
-            "join Category as c on p.category.id = c.id " +
-            "where p.name like concat('%', :#{#requestDto.name} ,'%') and " +
-            "((p.price between :#{#requestDto.priceFrom} and :#{#requestDto.priceTo}) or :#{#requestDto.priceFrom} is null or :#{#requestDto.priceTo} is null ) " +
-            "and (p.category.id = :#{#requestDto.categoryId} or :#{#requestDto.categoryId} = -1)")
-    Page<Product> findAllPageProduct(Pageable pageable, @Param("requestDto") RequestDto requestDto);
-
+    @Query(value = "select p.* from product as p " +
+            "join category as c on p.id_cate = c.id " +
+            "where lower(p.name)  collate utf8mb4_bin like lower(concat('%',:name,'%')) and " +
+            "((p.price between :priceFrom and :priceTo) or :priceFrom is null or :priceTo is null) " +
+            "and (p.id_cate = :categoryId or :categoryId = -1)", nativeQuery = true)
+    Page<Product> getAllPageProduct(Pageable pageable, @Param("name") String name,
+                                    @Param("priceFrom") Double priceFrom,
+                                    @Param("priceTo") Double priceTo,
+                                    @Param("categoryId") Integer categoryId);
 
     @Query(value = " select p from Product p " +
             "join ProductDish pd on p.id = pd.product.id " +
             "join Dish d on d.id = pd.dish.id where d.id = :id")
     List<Product> findAllByDishId(@Param("id") Integer id);
 
-    @Query(value ="select p.*,sum(po.quantity) as quantityProductOrder " +
+    @Query(value = "select p.*,sum(po.quantity) as quantityProductOrder " +
             "from product_order as po " +
             "left join product as p on po.product_id = p.id " +
             "left join category as c on p.id_cate = c.id " +
-            "group by p.id ,p.name order by quantityProductOrder desc limit 8",nativeQuery = true)
+            "group by p.id ,p.name order by quantityProductOrder desc limit 8", nativeQuery = true)
     List<IProductDto> findTopSelling();
+
+
+
 }
